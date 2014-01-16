@@ -1,17 +1,19 @@
-#
-# Copyright (c) 2013, Laird
-#
-# Permission to use, copy, modify, and/or distribute this software for any
-# purpose with or without fee is hereby granted, provided that the above
-# copyright notice and this permission notice appear in all copies
-# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
-# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
-# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
-# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-#--------------------------------------------------------------------------
+/*
+
+Copyright (c) 2013, Laird
+
+Permission to use, copy, modify, and/or distribute this software for any 
+purpose with or without fee is hereby granted, provided that the above 
+copyright notice and this permission notice appear in all copies.
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES 
+WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF 
+MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY 
+SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES 
+WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
+OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN 
+CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+*/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -299,6 +301,22 @@ char *ether_ntoa(const sdc_ether_addr *ea, char *buf)
 	return (buf);
 }
 
+void printDHCPLease(const DHCP_LEASE *dhcp)
+{
+	printf("interface:    %s\n",  dhcp->interface);
+	printf("address:      %s\n",  dhcp->address);
+	printf("subnet_mask:  %s\n",  dhcp->subnet_mask);
+	printf("routers:      %s\n",  dhcp->routers);
+	printf("lease_time:   %ld\n", dhcp->lease_time);
+	printf("message_type: %d\n",  dhcp->message_type);
+	printf("dns_servers:  %s\n",  dhcp->dns_servers);
+	printf("dhcp_server:  %s\n",  dhcp->dhcp_server);
+	printf("domain_name:  %s\n",  dhcp->domain_name);
+	printf("renew:        %s\n",  dhcp->renew);
+	printf("rebind:       %s\n",  dhcp->rebind);
+	printf("expire:       %s\n",  dhcp->expire);
+}
+
 unsigned long long historic_bitmask = 0;
 
 SDCERR event_handler(unsigned long event_type, SDC_EVENT *event)
@@ -333,8 +351,13 @@ SDCERR event_handler(unsigned long event_type, SDC_EVENT *event)
 			printf("\tstatus: %s", dhcpStatusToStr(event->status));
 			if(event->reason)
 				printf("\tDHCP reason: %s", dhcpReasonToStr(event->reason));
-			//PLAT_GetDHCPInfo(&dhcp);
-			//PLAT_PrintDHCPInfo(&dhcp);
+			if((event->status == BOUND) || (event->status == RENEWED) ||
+			   (event->status == DECONFIG) || (event->status == RELEASED))
+			{
+				printf("\n");
+				LRD_WF_GetDHCPLease(&dhcp);
+				printDHCPLease(&dhcp);
+			}
 			break;
 		case SDC_E_CMDERROR:
 			if(event->reason)
