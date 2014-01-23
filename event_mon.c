@@ -68,6 +68,7 @@ char * eventToStr(int event)
 		case SDC_E_REGDOMAIN:  return "SDC_E_REGDOMAIN"; break;
 		case SDC_E_CMDERROR:  return "SDC_E_CMDERROR"; break;
 		case SDC_E_CONNECTION_STATE: return "SDC_E_CONNECTION_STATE"; break;
+		case SDC_E_INTERNAL: return "SDC_E_INTERNAL"; break;
 		case SDC_E_MAX: return "SDC_E_MAX"; break;
 		default :
 			sprintf(BUFFER, "0x%x", event);
@@ -279,6 +280,34 @@ char* dhcpReasonToStr(LRD_WF_EvtDHCPReason reason)
 	}
 }
 
+char* intStatusToStr(LRD_WF_EvtIntStatus status)
+{
+	switch(status)
+	{
+	case INT_STATUS_UNSPEC: return "INT_STATUS_UNSPEC"; break;
+	case LOST_COM_DRV:      return "LOST_COM_DRV"; break;
+	case LOST_COM_KERN:     return "LOST_COM_KERN"; break;
+	case LOST_COM_SUPP:     return "LOST_COM_SUPP"; break;
+	case LOST_COM_INJ:      return "LOST_COM_INJ"; break;
+	default:
+		sprintf(BUFFER, "%d", status);
+		return BUFFER;
+	}
+}
+
+char* intReasonToStr(LRD_WF_EvtIntReason reason)
+{
+	switch(reason)
+	{
+	case INT_REASON_UNSPEC: return "INT_REASON_UNSPEC"; break;
+	case COM_EXITED:        return "COM_EXITED"; break;
+	case COM_ERROR:         return "COM_ERROR"; break;
+	default:
+		sprintf(BUFFER, "%d", reason);
+		return BUFFER;
+	}
+}
+
 char* authModeToStr( int auth_type )
 {
 	switch(auth_type)
@@ -371,6 +400,10 @@ SDCERR event_handler(unsigned long event_type, SDC_EVENT *event)
 			else
 				printf("\treason: %s", disconnectReasontoStr(event->reason));
 			printf("\t80211 reason: %s", w80211ReasonToStr(event->auth_type));
+			break;
+		case SDC_E_INTERNAL:
+			printf("\tstatus: %s", intStatusToStr(event->status));
+			printf("\treason: %s", intReasonToStr(event->reason));
 			break;
 	}
 
