@@ -1,4 +1,7 @@
 This is a basic example program to display Laird SDK Events.
 
+2014-01-23
+Adding SDC_E_INTERNAL event parsing
+
 2014-01-09
 Initial version of the example event_mon.
