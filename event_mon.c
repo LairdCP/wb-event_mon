@@ -22,6 +22,9 @@ CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <unistd.h>
 #include "sdc_sdk.h"
 
+#define LRD_EVENT_MON_VERSION_MAJOR 1
+#define LRD_EVENT_MON_VERSION_MINOR 0
+
 void sigproc(int);
 
 void quitproc(int);
@@ -138,6 +141,7 @@ char * w80211ReasonToStr(unsigned int reason)
 		case DOT11_RC_NOT_AUTH		    : return "DOT11_RC_NOT_AUTH"; break;
 		case DOT11_RC_BAD_PC			: return "DOT11_RC_BAD_PC"; break;
 		case DOT11_RC_BAD_CHANNELS		: return "DOT11_RC_BAD_CHANNELS"; break;
+		case DOT11_RC_BSS_TRANSIT_MGMT	: return "DOT11_RC_BSS_TRANSIT_MGMT"; break;
 		case DOT11_RC_UNSPECIFIED_QOS	: return "DOT11_RC_UNSPECIFIED_QOS"; break;
 		case DOT11_RC_INSUFFCIENT_BW	: return "DOT11_RC_INSUFFCIENT_BW"; break;
 		case DOT11_RC_EXCESSIVE_FRAMES	: return "DOT11_RC_EXCESSIVE_FRAMES"; break;
@@ -429,6 +433,8 @@ int main()
 
 	signal(SIGINT, sigproc);
 	signal(SIGQUIT, quitproc);
+
+	printf("SDK Event Monitor Version %u.%u\n", LRD_EVENT_MON_VERSION_MAJOR, LRD_EVENT_MON_VERSION_MINOR);
 
 	for (i=(int)SDC_E_SET_SSID; i< SDC_E_MAX; i++)
 	{
