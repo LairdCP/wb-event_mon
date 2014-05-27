@@ -17,7 +17,7 @@
 # Buildroot must be fully built.
 # LRD_BUILDROOT_OUTPUT = /.../wb/buildroot/output/product
 
-CC = arm-sdc-linux-gnueabi-gcc
+CC = $(LRD_BUILDROOT_OUTPUT)/host/usr/bin/arm-sdc-linux-gnueabi-g++
 IDIR = -I$(LRD_BUILDROOT_OUTPUT)/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include -I../../include
 LDIR = -L$(LRD_BUILDROOT_OUTPUT)/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/lib
 
