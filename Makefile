@@ -13,14 +13,6 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #--------------------------------------------------------------------------
 
-# Set LRD_BUILDROOT_OUTPUT to point to the outout directory of buildroot
-# Buildroot must be fully built.
-# LRD_BUILDROOT_OUTPUT = /.../wb/buildroot/output/product
-
-CC = $(LRD_BUILDROOT_OUTPUT)/host/usr/bin/arm-sdc-linux-gnueabi-g++
-IDIR = -I$(LRD_BUILDROOT_OUTPUT)/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/include -I../../include
-LDIR = -L$(LRD_BUILDROOT_OUTPUT)/host/usr/arm-buildroot-linux-gnueabi/sysroot/usr/lib
-
 CFLAGS = -c -Wall $(IDIR)
 
 _EXE  = event_mon
@@ -28,15 +20,15 @@ _OBJS = event_mon.o
 _LIBS = -lsdc_sdk -lpthread -lnl-3 -lnl-genl-3
 
 %.o: %.c
-	$(CC) $(CFLAGS) $^ -o $@
+	$(CXX) $(CFLAGS) $^ -o $@
 
-all: $(_EXE) $(_EXE_INJ)
+all: $(_EXE)
 
 $(_EXE): $(_OBJS)
-	$(CC) -o $(_EXE) $(_OBJS) $(LDIR) $(_LIBS)
+	$(CXX) -o $(_EXE) $(_OBJS) $(_LIBS)
 
 clean:
-	rm -f $(_OBJS) $(_EXE) $(_OBJS_INJ)
+	rm -f $(_OBJS) $(_EXE)
 
 .PHONY: clean
 
