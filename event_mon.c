@@ -579,9 +579,9 @@ void usage()
 	printf("\nOptions:\n\n");
 	printf("    --types,-t	TYPE,TYPE,..    Specify the Laird event types separated by comma (SDC_E_AUTH,SDC_E_ROAM,...)\n");
 	printf("                                Default is all event types.\n");
-	printf("    --output,-o CONSOLE         Outputs events to console (Default)\n");
-	printf("                LOGGING         Outputs events to syslog\n");
-	printf("                BOTH            Outputs to console and syslog\n");
+	printf("    --output,-o console         Outputs events to console (Default)\n");
+	printf("                logging         Outputs events to syslog\n");
+	printf("                both            Outputs to console and syslog\n");
 	printf("    --lease,-l                  Output current DHCP lease on BOUND, RENEWED, DECONFIG, and RELEASED\n");
 	printf("                                Default is off\n");
 
