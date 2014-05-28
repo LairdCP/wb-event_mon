@@ -1,5 +1,10 @@
 This is a basic example program to display Laird SDK Events.
 
+2014-05-27
+Updated version to 1.1
+Adding support for outputting to syslog
+Adding options to specify output options and event types
+
 2014-01-28
 Adding DOT11_RC_BSS_TRANSIT_MGMT .11 reason code and version print out.
 
