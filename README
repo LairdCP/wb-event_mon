@@ -1,5 +1,9 @@
 This is a basic example program to display Laird SDK Events.
 
+2014-06-03
+Updated version to 1.1.1
+Adding handling of SIGTERM
+
 2014-05-27
 Updated version to 1.1
 Adding support for outputting to syslog
