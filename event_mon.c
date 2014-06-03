@@ -27,6 +27,7 @@ CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 #define LRD_EVENT_MON_VERSION_MAJOR 1
 #define LRD_EVENT_MON_VERSION_MINOR 1
+#define LRD_EVENT_MON_VERSION_REVISION 1
 
 void sigproc(int);
 void quitproc(int);
@@ -519,7 +520,8 @@ int main(int argc, char *argv[])
 	openlog("laird", LOG_PID|LOG_CONS, LOG_USER);
 
 	signal(SIGINT, sigproc);
-	signal(SIGQUIT, quitproc);
+	signal(SIGQUIT, sigproc);
+	signal(SIGTERM, sigproc);
 
 	while((c = getopt_long(argc, argv, "t:o:l", long_options, NULL)) != -1)
 	{
@@ -548,7 +550,8 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	LRD_EVT_OutputString("Laird Event Monitor Version %u.%u\n", LRD_EVENT_MON_VERSION_MAJOR, LRD_EVENT_MON_VERSION_MINOR);
+	LRD_EVT_OutputString("Laird Event Monitor Version %u.%u.%u\n", LRD_EVENT_MON_VERSION_MAJOR,
+	LRD_EVENT_MON_VERSION_MINOR, LRD_EVENT_MON_VERSION_REVISION);
 
 	if(eventMask == 0)
 		eventMask = 0xFFFFFFFFFFFFFFFF;
@@ -590,11 +593,13 @@ void usage()
 void dumpBitmaskAndExit(unsigned long long historic_mask)
 {
 	unsigned int i;
+
+	LRD_EVT_OutputString("Laird Event Monitor Exiting\n");
 	if(!historic_mask)
 	{
-		LRD_EVT_OutputString("\nNo events reported\n");
+		LRD_EVT_OutputString("No events reported\n");
 	}
-	LRD_EVT_OutputString("\nBitmask of events which occured: 0x%016llX\n", historic_mask);
+	LRD_EVT_OutputString("Bitmask of events which occurred: 0x%016llX\n", historic_mask);
 	LRD_EVT_OutputString("Events:\n");
 	for (i=0; i < 8*sizeof(historic_mask); i++)
 	{
@@ -611,12 +616,6 @@ void cleanUp()
 }
 
 void sigproc(int foo)
-{
-	cleanUp();
-	exit(0);
-}
-
-void quitproc(int foo)
 {
 	cleanUp();
 	exit(0);
