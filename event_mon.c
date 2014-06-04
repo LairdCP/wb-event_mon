@@ -487,11 +487,11 @@ unsigned long long LRD_EVT_ParseTypes(char* string)
 		for(unsigned int i = 0; i <= SDC_E_MAX; i++)
 		{
 			if(strcmp(tok, eventNames[i]) == 0) {
-				eventMask |= (1<<i);
+				eventMask |= ((unsigned long long)1<<i);
 				break;
 			}
 		}
-		tok = strtok(NULL, " ,");
+		tok = strtok(NULL, ",");
 	}
 
 	return eventMask;
@@ -503,9 +503,11 @@ int main(int argc, char *argv[])
 {
 	unsigned long long eventMask = 0;
 	int c, rc;
+	bool bitmask_specified = false;
 
 	static struct option long_options[] =
 	{
+		{"bitmask", required_argument, 0, 'b'},
 		{"types", required_argument, 0, 't'},
 		{"output", required_argument, 0, 'o'},
 		{"lease", no_argument, 0, 'l'},
@@ -523,12 +525,27 @@ int main(int argc, char *argv[])
 	signal(SIGQUIT, sigproc);
 	signal(SIGTERM, sigproc);
 
-	while((c = getopt_long(argc, argv, "t:o:l", long_options, NULL)) != -1)
+	while((c = getopt_long(argc, argv, "b:t:o:l", long_options, NULL)) != -1)
 	{
 		switch(c)
 		{
+		case 'b':
+			if(bitmask_specified == true) {
+				printf("Both bitmask and types arguments cannot be set\n");
+				cleanUp();
+				return 1;
+			}
+			eventMask = strtoull(optarg, NULL, 0);
+			bitmask_specified = true;
+			break;
 		case 't':
+			if(bitmask_specified == true) {
+				printf("Both bitmask and types arguments cannot be set\n");
+				cleanUp();
+				return 1;
+			}
 			eventMask = LRD_EVT_ParseTypes(optarg);
+			bitmask_specified = true;
 			break;
 		case 'o':
 			if(strcmp("console", optarg) == 0) {
@@ -580,13 +597,15 @@ void usage()
 	printf("Usage: event_mon [OPTIONS]\n");
 	printf("\nMonitor Events from the Laird WiFi subsystem\n");
 	printf("\nOptions:\n\n");
-	printf("    --types,-t	TYPE,TYPE,..    Specify the Laird event types separated by comma (SDC_E_AUTH,SDC_E_ROAM,...)\n");
-	printf("                                Default is all event types.\n");
-	printf("    --output,-o console         Outputs events to console (Default)\n");
-	printf("                logging         Outputs events to syslog\n");
-	printf("                both            Outputs to console and syslog\n");
-	printf("    --lease,-l                  Output current DHCP lease on BOUND, RENEWED, DECONFIG, and RELEASED\n");
-	printf("                                Default is off\n");
+	printf("    --types,-t	 TYPE,TYPE,..    Specify the Laird event types separated by comma (SDC_E_AUTH,SDC_E_ROAM,...)\n");
+	printf("                                 Default is all event types.\n");
+	printf("    --bitmask,-b MASK            Specify the event type bitmask directly (0x0000001FA3008000 or 0X0000001FA3008000)\n");
+	printf("                                 Only event types OR bitmask can specified.  Default is all event types.\n");
+	printf("    --output,-o  console         Outputs events to console (Default)\n");
+	printf("                 logging         Outputs events to syslog\n");
+	printf("                 both            Outputs to console and syslog\n");
+	printf("    --lease,-l                   Output current DHCP lease on BOUND, RENEWED, DECONFIG, and RELEASED\n");
+	printf("                                 Default is off\n");
 
 }
 
