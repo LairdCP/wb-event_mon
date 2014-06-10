@@ -593,7 +593,7 @@ int main(int argc, char *argv[])
 
 void usage()
 {
-	printf("Laird Event Monitor Version %u.%u\n", LRD_EVENT_MON_VERSION_MAJOR, LRD_EVENT_MON_VERSION_MINOR);
+	printf("Laird Event Monitor Version %u.%u.%u\n", LRD_EVENT_MON_VERSION_MAJOR, LRD_EVENT_MON_VERSION_MINOR, LRD_EVENT_MON_VERSION_REVISION);
 	printf("Usage: event_mon [OPTIONS]\n");
 	printf("\nMonitor Events from the Laird WiFi subsystem\n");
 	printf("\nOptions:\n\n");
