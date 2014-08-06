@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2013, Laird
+Copyright (c) 2014, Laird
 
 Permission to use, copy, modify, and/or distribute this software for any 
 purpose with or without fee is hereby granted, provided that the above 
@@ -27,7 +27,7 @@ CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 #define LRD_EVENT_MON_VERSION_MAJOR 1
 #define LRD_EVENT_MON_VERSION_MINOR 1
-#define LRD_EVENT_MON_VERSION_REVISION 1
+#define LRD_EVENT_MON_VERSION_REVISION 2
 
 void sigproc(int);
 void quitproc(int);
@@ -125,6 +125,7 @@ const char* eventToStr(int event)
 		case SDC_E_CMDERROR:  return "SDC_E_CMDERROR"; break;
 		case SDC_E_CONNECTION_STATE: return "SDC_E_CONNECTION_STATE"; break;
 		case SDC_E_INTERNAL: return "SDC_E_INTERNAL"; break;
+		case SDC_E_FW_ERROR: return "SDC_E_FW_ERROR"; break;
 		case SDC_E_MAX: return "SDC_E_MAX"; break;
 		default :
 			sprintf(BUFFER, "0x%x", event);
@@ -365,6 +366,20 @@ const char* intReasonToStr(LRD_WF_EvtIntReason reason)
 	}
 }
 
+const char* fwErrReasonToStr(LRD_WF_EvtFwErrorReason reason)
+{
+	switch(reason)
+	{
+	case FW_ASSERT:          return "FW_ASSERT"; break;
+	case FW_HB_RESP_FAILURE: return "FW_HB_RESP_FAILURE"; break;
+	case FW_EP_FULL:         return "FW_EP_FULL"; break;
+	default:
+		sprintf(BUFFER, "%d", reason);
+		return BUFFER;
+	}
+}
+
+
 const char* authModeToStr( int auth_type )
 {
 	switch(auth_type)
@@ -457,6 +472,10 @@ SDCERR event_handler(unsigned long event_type, SDC_EVENT *event)
 		case SDC_E_INTERNAL:
 			LRD_EVT_OutputString("Event: %s\t status: %s\t reason: %s\n", eventToStr(event_type),
 			intStatusToStr((LRD_WF_EvtIntStatus)event->status),intReasonToStr((LRD_WF_EvtIntReason)event->reason));
+			break;
+		case SDC_E_FW_ERROR:
+			LRD_EVT_OutputString("Event: %s\t reason: %s\n", eventToStr(event_type),
+			fwErrReasonToStr((LRD_WF_EvtFwErrorReason)event->reason));
 			break;
 		default:
 			LRD_EVT_OutputString("Event: %s\n", eventToStr(event_type));
