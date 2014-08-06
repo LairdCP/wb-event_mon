@@ -1,5 +1,9 @@
 This is a basic example program to display Laird SDK Events.
 
+2014-08-06
+Updated version to 1.1.2
+Adding support for SDC_E_FW_ERROR event
+
 2014-06-04
 Updated version to 1.1.1
 Adding handling of SIGTERM
