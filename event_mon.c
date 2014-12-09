@@ -27,7 +27,7 @@ CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 #define LRD_EVENT_MON_VERSION_MAJOR 1
 #define LRD_EVENT_MON_VERSION_MINOR 1
-#define LRD_EVENT_MON_VERSION_REVISION 2
+#define LRD_EVENT_MON_VERSION_REVISION 3
 
 void sigproc(int);
 void quitproc(int);
@@ -81,6 +81,7 @@ const char *eventNames[SDC_E_MAX+1] = {
 	"SDC_E_CMDERROR",
 	"SDC_E_CONNECTION_STATE",
 	"SDC_E_INTERNAL",
+	"SDC_E_FW_ERROR",
 	"SDC_E_MAX",
 };
 
@@ -494,26 +495,38 @@ SDCERR event_handler(unsigned long event_type, SDC_EVENT *event)
 	return(SDCERR_SUCCESS);
 }
 
-unsigned long long LRD_EVT_ParseTypes(char* string)
+SDCERR LRD_EVT_ParseTypes(char* string, unsigned long long *eventMask)
 {
-	unsigned long long eventMask = 0;
 	char *tok;
 
 	tok = strtok(string, " ,");
 
 	while(tok != NULL)
 	{
-		for(unsigned int i = 0; i <= SDC_E_MAX; i++)
+		unsigned int i;
+
+		for(i = 0; i <= SDC_E_MAX; i++)
 		{
 			if(strcmp(tok, eventNames[i]) == 0) {
-				eventMask |= ((unsigned long long)1<<i);
+				*eventMask |= ((unsigned long long)1<<i);
 				break;
 			}
 		}
+
+		if(i >= SDC_E_MAX) {
+			printf("Invalid type found\n");
+			return SDCERR_FAIL;
+		}
+
 		tok = strtok(NULL, ",");
 	}
 
-	return eventMask;
+	if(*eventMask == 0) {
+		printf("No valid types were specified after types option\n");
+		return SDCERR_FAIL;
+	}
+
+	return SDCERR_SUCCESS;
 }
 
 
@@ -563,7 +576,11 @@ int main(int argc, char *argv[])
 				cleanUp();
 				return 1;
 			}
-			eventMask = LRD_EVT_ParseTypes(optarg);
+			rc = LRD_EVT_ParseTypes(optarg, &eventMask);
+			if(rc != SDCERR_SUCCESS) {
+				cleanUp();
+				return 1;
+			}
 			bitmask_specified = true;
 			break;
 		case 'o':
@@ -581,6 +598,9 @@ int main(int argc, char *argv[])
 		case 'l':
 			outputLease = true;
 			break;
+		case '?':
+			cleanUp();
+			return 1;
 		default:
 			break;
 		}

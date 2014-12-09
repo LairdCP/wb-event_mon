@@ -1,5 +1,10 @@
 This is a basic example program to display Laird SDK Events.
 
+2014-12-09
+Updated version to 1.1.3
+Fixed crash on specifying SDC_E_FW_ERROR with types option
+Added more types argument parsing errors
+
 2014-08-06
 Updated version to 1.1.2
 Adding support for SDC_E_FW_ERROR event
