@@ -1,30 +1,3 @@
-This is a basic example program to display Laird SDK Events.
+This program is the Laird Events logger and radio state manager.
 
-2014-12-09
-Updated version to 1.1.3
-Fixed crash on specifying SDC_E_FW_ERROR with types option
-Added more types argument parsing errors
-
-2014-08-06
-Updated version to 1.1.2
-Adding support for SDC_E_FW_ERROR event
-
-2014-06-04
-Updated version to 1.1.1
-Adding handling of SIGTERM
-Adding --bitmask (-b) option to specify bitmask directly
-Fixed bug where --types wouldn't set all event types
-
-2014-05-27
-Updated version to 1.1
-Adding support for outputting to syslog
-Adding options to specify output options and event types
-
-2014-01-28
-Adding DOT11_RC_BSS_TRANSIT_MGMT .11 reason code and version print out.
-
-2014-01-23
-Adding SDC_E_INTERNAL event parsing.
-
-2014-01-09
-Initial version of the example event_mon.
+It is provided for integration on all MSD45 and SSD45 customers' platforms.
