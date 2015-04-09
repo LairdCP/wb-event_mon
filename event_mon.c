@@ -26,8 +26,8 @@ CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "sdc_sdk.h"
 
 #define LRD_EVENT_MON_VERSION_MAJOR 1
-#define LRD_EVENT_MON_VERSION_MINOR 1
-#define LRD_EVENT_MON_VERSION_REVISION 3
+#define LRD_EVENT_MON_VERSION_MINOR 2
+#define LRD_EVENT_MON_VERSION_REVISION 0
 
 void sigproc(int);
 void quitproc(int);
@@ -37,6 +37,9 @@ void cleanUp();
 bool logging = false;
 bool console = true;
 bool outputLease = false;
+bool manager = false;
+
+bool fw_crash = false;
 char BUFFER[20] = "                   ";
 
 #define LRD_EVT_OutputString(...) {if(logging) syslog(LOG_INFO, __VA_ARGS__); if(console) printf(__VA_ARGS__);}
@@ -477,6 +480,15 @@ SDCERR event_handler(unsigned long event_type, SDC_EVENT *event)
 		case SDC_E_FW_ERROR:
 			LRD_EVT_OutputString("Event: %s\t reason: %s\n", eventToStr(event_type),
 			fwErrReasonToStr((LRD_WF_EvtFwErrorReason)event->reason));
+			fw_crash = true;
+			break;
+		case SDC_E_READY:
+			LRD_EVT_OutputString("Event: %s\n", eventToStr(event_type));
+			if(fw_crash) {
+				if(ActivateConfig(NULL) != SDCERR_SUCCESS)
+					LRD_EVT_OutputString("Failed to reactivate the current profile after firmware crash\n");
+				fw_crash = false;
+			}
 			break;
 		default:
 			LRD_EVT_OutputString("Event: %s\n", eventToStr(event_type));
@@ -543,6 +555,7 @@ int main(int argc, char *argv[])
 		{"types", required_argument, 0, 't'},
 		{"output", required_argument, 0, 'o'},
 		{"lease", no_argument, 0, 'l'},
+		{"manager", no_argument, 0, 'm'},
 		{0, 0, 0, 0},
 	};
 
@@ -557,7 +570,7 @@ int main(int argc, char *argv[])
 	signal(SIGQUIT, sigproc);
 	signal(SIGTERM, sigproc);
 
-	while((c = getopt_long(argc, argv, "b:t:o:l", long_options, NULL)) != -1)
+	while((c = getopt_long(argc, argv, "b:t:o:lm", long_options, NULL)) != -1)
 	{
 		switch(c)
 		{
@@ -597,6 +610,10 @@ int main(int argc, char *argv[])
 			break;
 		case 'l':
 			outputLease = true;
+			break;
+		case 'm':
+			manager = true;
+			eventMask |= ((unsigned long long)1 << SDC_E_FW_ERROR) | ((unsigned long long)1 << SDC_E_READY);
 			break;
 		case '?':
 			cleanUp();
@@ -645,6 +662,7 @@ void usage()
 	printf("                 both            Outputs to console and syslog\n");
 	printf("    --lease,-l                   Output current DHCP lease on BOUND, RENEWED, DECONFIG, and RELEASED\n");
 	printf("                                 Default is off\n");
+	printf("    --manager,-m                 Enable radio state manager.  This recovers the radio state on a firmware crash.\n");
 
 }
 
