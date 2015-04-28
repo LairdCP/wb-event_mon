@@ -480,13 +480,15 @@ SDCERR event_handler(unsigned long event_type, SDC_EVENT *event)
 		case SDC_E_FW_ERROR:
 			LRD_EVT_OutputString("Event: %s\t reason: %s\n", eventToStr(event_type),
 			fwErrReasonToStr((LRD_WF_EvtFwErrorReason)event->reason));
+			if(LRD_WF_SuppDisconnect() != SDCERR_SUCCESS)
+				LRD_EVT_OutputString("Failed to stop automatic reconnect after firmware crash\n");
 			fw_crash = true;
 			break;
 		case SDC_E_READY:
 			LRD_EVT_OutputString("Event: %s\n", eventToStr(event_type));
 			if(fw_crash) {
-				if(ActivateConfig(NULL) != SDCERR_SUCCESS)
-					LRD_EVT_OutputString("Failed to reactivate the current profile after firmware crash\n");
+				if(LRD_WF_SuppReconfigure() != SDCERR_SUCCESS)
+					LRD_EVT_OutputString("Failed to start automatic reconnect after firmware recovery\n");
 				fw_crash = false;
 			}
 			break;
