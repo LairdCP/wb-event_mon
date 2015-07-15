@@ -26,8 +26,8 @@ CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "sdc_sdk.h"
 
 #define LRD_EVENT_MON_VERSION_MAJOR 1
-#define LRD_EVENT_MON_VERSION_MINOR 2
-#define LRD_EVENT_MON_VERSION_REVISION 1
+#define LRD_EVENT_MON_VERSION_MINOR 3
+#define LRD_EVENT_MON_VERSION_REVISION 0
 
 void sigproc(int);
 void quitproc(int);
@@ -85,56 +85,18 @@ const char *eventNames[SDC_E_MAX+1] = {
 	"SDC_E_CONNECTION_STATE",
 	"SDC_E_INTERNAL",
 	"SDC_E_FW_ERROR",
+	"SDC_E_AP_STA_CONNECT",
+	"SDC_E_AP_STA_DISCONNECT",
 	"SDC_E_MAX",
 };
 
 const char* eventToStr(int event)
 {
-	switch(event)
-	{
-		case SDC_E_SET_SSID: return "SDC_E_SET_SSID"; break;
-		case SDC_E_AUTH: return "SDC_E_AUTH"; break;
-		case SDC_E_AUTH_IND: return "SDC_E_AUTH_IND"; break;
-		case SDC_E_DEAUTH: return "SDC_E_DEAUTH"; break;
-		case SDC_E_DEAUTH_IND: return "SDC_E_DEAUTH_IND"; break;
-		case SDC_E_ASSOC: return "SDC_E_ASSOC"; break;
-		case SDC_E_ASSOC_IND: return "SDC_E_ASSOC_IND"; break;
-		case SDC_E_REASSOC: return "SDC_E_REASSOC"; break;
-		case SDC_E_REASSOC_IND: return "SDC_E_REASSOC_IND"; break;
-		case SDC_E_DISASSOC: return "SDC_E_DISASSOC"; break;
-		case SDC_E_DISASSOC_IND: return "SDC_E_DISASSOC_IND"; break;
-		case SDC_E_QUIET_START: return "SDC_E_QUIET_START"; break;
-		case SDC_E_QUIET_END: return "SDC_E_QUIET_END"; break;
-		case SDC_E_BEACON_RX: return "SDC_E_BEACON_RX"; break;
-		case SDC_E_MIC_ERROR: return "SDC_E_MIC_ERROR"; break;
-		case SDC_E_ROAM: return "SDC_E_ROAM"; break;
-		case SDC_E_PMKID_CACHE: return "SDC_E_PMKID_CACHE"; break;
-		case SDC_E_ADDTS_IND: return "SDC_E_ADDTS_IND"; break;
-		case SDC_E_DELTS_IND: return "SDC_E_DELTS_IND"; break;
-		case SDC_E_ROAM_PREP: return "SDC_E_ROAM_PREP"; break;
-		case SDC_E_PSM_WATCHDOG: return "SDC_E_PSM_WATCHDOG"; break;
-		case SDC_E_PSK_SUP: return "SDC_E_PSK_SUP"; break;
-		case SDC_E_ICV_ERROR: return "SDC_E_ICV_ERROR"; break;
-		case SDC_E_RSSI: return "SDC_E_RSSI"; break;
-		case SDC_E_DHCP: return "SDC_E_DHCP"; break;
-		case SDC_E_READY:  return "SDC_E_READY"; break;
-		case SDC_E_CONNECT_REQ:  return "SDC_E_CONNECT_REQ"; break;
-		case SDC_E_CONNECT:  return "SDC_E_CONNECT"; break;
-		case SDC_E_RECONNECT_REQ:  return "SDC_E_RECONNECT_REQ"; break;
-		case SDC_E_DISCONNECT_REQ:  return "SDC_E_DISCONNECT_REQ"; break;
-		case SDC_E_DISCONNECT:  return "SDC_E_DISCONNECT"; break;
-		case SDC_E_SCAN_REQ:  return "SDC_E_SCAN_REQ"; break;
-		case SDC_E_SCAN:  return "SDC_E_SCAN"; break;
-		case SDC_E_REGDOMAIN:  return "SDC_E_REGDOMAIN"; break;
-		case SDC_E_CMDERROR:  return "SDC_E_CMDERROR"; break;
-		case SDC_E_CONNECTION_STATE: return "SDC_E_CONNECTION_STATE"; break;
-		case SDC_E_INTERNAL: return "SDC_E_INTERNAL"; break;
-		case SDC_E_FW_ERROR: return "SDC_E_FW_ERROR"; break;
-		case SDC_E_MAX: return "SDC_E_MAX"; break;
-		default :
-			sprintf(BUFFER, "0x%x", event);
-			return BUFFER;
-	}
+	if (event <= SDC_E_MAX)
+		return eventNames[event];
+
+	sprintf(BUFFER, "0x%x", event);
+	return BUFFER;
 }
 
 /* Event status codes */
@@ -481,15 +443,18 @@ SDCERR event_handler(unsigned long event_type, SDC_EVENT *event)
 		case SDC_E_FW_ERROR:
 			LRD_EVT_OutputString("Event: %s\t reason: %s\n", eventToStr(event_type),
 			fwErrReasonToStr((LRD_WF_EvtFwErrorReason)event->reason));
-			if(LRD_WF_SuppDisconnect() != SDCERR_SUCCESS)
-				LRD_EVT_OutputString("Failed to stop automatic reconnect after firmware crash\n");
-			fw_crash = true;
+			if (manager) { //only setup for fw_crash recovery if manager active
+				if(LRD_WF_SuppDisconnect() != SDCERR_SUCCESS)
+					LRD_EVT_OutputString("Failed to stop automatic reconnect after firmware crash\n");
+				fw_crash = true;
+			}
 			break;
 		case SDC_E_READY:
 			LRD_EVT_OutputString("Event: %s\n", eventToStr(event_type));
 			if(fw_crash) {
 				if(LRD_WF_SuppReconfigure() != SDCERR_SUCCESS)
-					LRD_EVT_OutputString("Failed to start automatic reconnect after firmware recovery\n");
+					if (LRD_WF_HostAPDRestart() != SDCERR_SUCCESS)
+						LRD_EVT_OutputString("Failed to start automatic reconnect after firmware recovery\n");
 				fw_crash = false;
 			}
 			break;
