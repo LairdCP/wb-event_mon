@@ -27,7 +27,7 @@ CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 #define LRD_EVENT_MON_VERSION_MAJOR 1
 #define LRD_EVENT_MON_VERSION_MINOR 3
-#define LRD_EVENT_MON_VERSION_REVISION 0
+#define LRD_EVENT_MON_VERSION_REVISION 1
 
 void sigproc(int);
 void quitproc(int);
@@ -532,7 +532,7 @@ int main(int argc, char *argv[])
 		return 0;
 	}
 
-	openlog("laird", LOG_PID|LOG_CONS, LOG_USER);
+	openlog(NULL, LOG_PID|LOG_CONS, LOG_USER);
 
 	signal(SIGINT, sigproc);
 	signal(SIGQUIT, sigproc);
