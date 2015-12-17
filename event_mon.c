@@ -600,7 +600,7 @@ int main(int argc, char *argv[])
 	rc = SDCRegisterForEvents(eventMask, event_handler);
 
 	if(rc != SDCERR_SUCCESS) {
-		LRD_EVT_OutputString("Failed to Register for Events with rc (%d)", rc);
+		LRD_EVT_OutputString("Failed to Register for Events with rc (%d)\n", rc);
 		cleanUp();
 		return 1;
 	}
