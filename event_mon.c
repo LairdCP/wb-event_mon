@@ -249,6 +249,9 @@ const char* authReasonToStr(LRD_WF_EvtAuthReason reason)
 	case METHOD_NOT_SUPPORTED: return "METHOD_NOT_SUPPORTED"; break;
 	case INVALID_CERT_PASS:    return "INVALID_CERT_PASS"; break;
 	case FOUR_WAY_HAND_SHAKE_FAILURE: return "FAILURE IN 4-WAY HANDSHAKE"; break;
+	case CERT_EXPIRED: return "CERT_EXPIRED"; break;
+	case CERT_NOT_YET_VALID: return "CERT_NOT_YET_VALID"; break;
+	case CERT_FAILURE_REASON_UNSPECIFIED: return "CERT_FAILURE_REASON_UNSPECIFIED"; break;
 	default:
 		sprintf(BUFFER, "%d", reason);
 		return BUFFER;
