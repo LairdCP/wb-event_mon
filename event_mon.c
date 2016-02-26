@@ -140,6 +140,7 @@ const char* roamReasonToStr( int reason )
 		case SDC_E_REASON_DIRECTED_ROAM : return "SDC_E_REASON_DIRECTED_ROAM"; break;
 		case SDC_E_REASON_TSPEC_REJECTED : return "SDC_E_REASON_TSPEC_REJECTED"; break;
 		case SDC_E_REASON_BETTER_AP : return "SDC_E_REASON_BETTER_AP"; break;
+		case SDC_E_REASON_UNSPECIFIED : return "SDC_E_REASON_UNSPECIFIED"; break;
 		default :
 			sprintf(BUFFER, "%d", reason);
 			return BUFFER;
