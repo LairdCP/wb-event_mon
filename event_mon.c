@@ -25,6 +25,8 @@ CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <string.h>
 #include "sdc_sdk.h"
 
+#define LRD_BLD_NUMBER  "3.5.5.0"
+
 #define LRD_EVENT_MON_VERSION_MAJOR 3
 #define LRD_EVENT_MON_VERSION_MINOR 5
 #define LRD_EVENT_MON_VERSION_REVISION 2
@@ -596,7 +598,7 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	LRD_EVT_OutputString("Laird Event Monitor Version %u.%u.%u.%u\n", LRD_EVENT_MON_VERSION_MAJOR,
+	LRD_EVT_OutputString("Laird Event Monitor Version %s-%u.%u.%u.%u\n", LRD_BLD_NUMBER, LRD_EVENT_MON_VERSION_MAJOR,
 	LRD_EVENT_MON_VERSION_MINOR, LRD_EVENT_MON_VERSION_REVISION, LRD_EVENT_MON_VERSION_SUB_REVISION);
 
 	if(eventMask == 0)
@@ -622,7 +624,7 @@ int main(int argc, char *argv[])
 
 void usage()
 {
-	printf("Laird Event Monitor Version %u.%u.%u.%u\n", LRD_EVENT_MON_VERSION_MAJOR, LRD_EVENT_MON_VERSION_MINOR, LRD_EVENT_MON_VERSION_REVISION, LRD_EVENT_MON_VERSION_SUB_REVISION);
+	printf("Laird Event Monitor Version %s-%u.%u.%u.%u\n", LRD_BLD_NUMBER, LRD_EVENT_MON_VERSION_MAJOR, LRD_EVENT_MON_VERSION_MINOR, LRD_EVENT_MON_VERSION_REVISION, LRD_EVENT_MON_VERSION_SUB_REVISION);
 	printf("Usage: event_mon [OPTIONS]\n");
 	printf("\nMonitor Events from the Laird WiFi subsystem\n");
 	printf("\nOptions:\n\n");
