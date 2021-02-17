@@ -25,7 +25,7 @@ CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <string.h>
 #include "sdc_sdk.h"
 
-#define LRD_BLD_NUMBER  "7.3.0.25"
+#define LRD_BLD_NUMBER  "7.3.0.26"
 
 #define LRD_EVENT_MON_VERSION_MAJOR 3
 #define LRD_EVENT_MON_VERSION_MINOR 5
