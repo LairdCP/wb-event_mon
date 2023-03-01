@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013, Laird
+# Copyright (c) 2013, Laird Connectivity
 #
 # Permission to use, copy, modify, and/or distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -13,19 +13,17 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #--------------------------------------------------------------------------
 
-CFLAGS = -c -Wall $(IDIR)
-
 _EXE  = event_mon
 _OBJS = event_mon.o
-_LIBS = -lsdc_sdk -lpthread -lnl-3 -lnl-genl-3
+_LIBS = -lsdc_sdk
 
 %.o: %.c
-	$(CXX) $(CFLAGS) $^ -o $@
+	$(CXX) $(CFLAGS) -c -Wall $^ -o $@
 
 all: $(_EXE)
 
 $(_EXE): $(_OBJS)
-	$(CXX) -o $(_EXE) $(_OBJS) $(_LIBS)
+	$(CXX) $(LDFLAGS) -o $(_EXE) $(_OBJS) $(_LIBS)
 
 clean:
 	rm -f $(_OBJS) $(_EXE)
