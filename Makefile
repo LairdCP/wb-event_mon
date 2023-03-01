@@ -18,12 +18,12 @@ _OBJS = event_mon.o
 _LIBS = -lsdc_sdk
 
 %.o: %.c
-	$(CXX) $(CFLAGS) -c -Wall $^ -o $@
+	$(CC) $(CFLAGS) -c -Wall $^ -o $@
 
 all: $(_EXE)
 
 $(_EXE): $(_OBJS)
-	$(CXX) $(LDFLAGS) -o $(_EXE) $(_OBJS) $(_LIBS)
+	$(CC) $(LDFLAGS) -o $(_EXE) $(_OBJS) $(_LIBS)
 
 clean:
 	rm -f $(_OBJS) $(_EXE)
