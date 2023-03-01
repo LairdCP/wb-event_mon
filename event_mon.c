@@ -16,6 +16,7 @@ CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include <stdbool.h>
 #include <unistd.h>
 #include <getopt.h>
 #include <syslog.h>
@@ -268,6 +269,7 @@ static const char* w80211ReasonToStr(unsigned int reason)
 	case DOT11_RC_BAD_WPA_VERSION	: return "DOT11_RC_BAD_WPA_VERSION"; break;
 	case DOT11_RC_INVALID_WPA_CAP	: return "DOT11_RC_INVALID_WPA_CAP"; break;
 	case DOT11_RC_8021X_AUTH_FAIL	: return "DOT11_RC_8021X_AUTH_FAIL"; break;
+
 	case DOT11_RC_UNSPECIFIED_QOS	: return "DOT11_RC_UNSPECIFIED_QOS"; break;
 	case DOT11_RC_INSUFFCIENT_BW	: return "DOT11_RC_INSUFFCIENT_BW"; break;
 	case DOT11_RC_EXCESSIVE_FRAMES	: return "DOT11_RC_EXCESSIVE_FRAMES"; break;
